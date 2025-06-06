@@ -12,6 +12,10 @@ class college (models.Model):
     college_mobile_no = models.CharField(max_length=15, default='N/A')
     college_email = models.EmailField(max_length=100, default='N/A')
     college_description = models.TextField(default='N/A')
+    
+    def __str__(self):
+        return self.college_name
+    
     class Meta:
         db_table = "college"
         
@@ -24,5 +28,10 @@ class student (models.Model):
     student_image = models.ImageField(upload_to='college_logos/', default='college_logos/default.png')
     student_mobile_no = models.CharField(max_length=15, default='N/A')
     student_email = models.EmailField(max_length=100, default='N/A')
+    
+    def __str__(self):
+        return self.student_name
+    
     class Meta:
         db_table = "student"
+        
