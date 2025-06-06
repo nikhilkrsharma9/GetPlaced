@@ -15,3 +15,14 @@ class college (models.Model):
     class Meta:
         db_table = "college"
         
+class student (models.Model):
+    student_name = models.CharField(max_length = 100, default = 'N/A')
+    student_reg_no = models.CharField(max_length = 20, default = 'N/A')
+    student_branch = models.CharField(max_length = 50, default = 'N/A')
+    student_year = models.CharField(max_length = 20, default = 'N/A')
+    student_skills = models.CharField(max_length = 20, default = 'N/A')
+    student_image = models.ImageField(upload_to='college_logos/', default='college_logos/default.png')
+    student_mobile_no = models.CharField(max_length=15, default='N/A')
+    student_email = models.EmailField(max_length=100, default='N/A')
+    class Meta:
+        db_table = "student"
