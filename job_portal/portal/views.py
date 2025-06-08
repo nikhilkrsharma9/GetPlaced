@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import college
+from django.contrib.auth.hashers import make_password
 
 # it is the index or home page
 def index (request):
@@ -24,8 +25,8 @@ def college_register(request):
             college_mobile_no=data.get('college_mobile_no'),
             college_email=data.get('college_email'),
             college_description=data.get('college_description'),
-            college_registration_id = data.get('college_registration_id'),
-            college_registration_password = data.get('college_registration_password'),
+            college_registration_id=data.get('college_registration_id'),
+            college_registration_password=make_password(data.get('college_registration_password')),
         )
         submitted = True
     return render(request, 'college_register.html', {'submitted': submitted})

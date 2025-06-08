@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, is_password_usable
 
 # Create your models here.
 
@@ -13,10 +14,16 @@ class college (models.Model):
     college_email = models.EmailField(max_length=100, default='N/A')
     college_description = models.TextField(default='N/A')
     college_registration_id = models.CharField(max_length=20, default='N/A')
-    college_registration_password = models.CharField(max_length=20, default='N/A')
+    college_registration_password = models.CharField(max_length=128, default='N/A')  # Increase length for hashes
     admin_verified = models.BooleanField(default=False)
     college_rating = models.PositiveSmallIntegerField(default=0, help_text="Rating (1-5 stars)")
     
+    def save(self, *args, **kwargs):
+        # Hash the password if it's not already hashed
+        if self.college_registration_password and not self.college_registration_password.startswith('pbkdf2_'):
+            self.college_registration_password = make_password(self.college_registration_password)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.college_name
     
@@ -38,4 +45,4 @@ class student (models.Model):
     
     class Meta:
         db_table = "student"
-        
+
