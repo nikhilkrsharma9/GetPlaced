@@ -5,5 +5,4 @@ urlpatterns = [
     path('', views.index), # index or home page
     path('search', views.job_search, name='job_search'),  # the seach box in index.html or home page
     path('college_register', views.college_register, name='college_register'),
-    path('college_register_success', views.college_register_success, name='college_register_success'),
 ]

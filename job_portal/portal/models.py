@@ -12,6 +12,8 @@ class college (models.Model):
     college_mobile_no = models.CharField(max_length=15, default='N/A')
     college_email = models.EmailField(max_length=100, default='N/A')
     college_description = models.TextField(default='N/A')
+    college_registration_id = models.CharField(max_length=20, default='N/A')
+    college_registration_password = models.CharField(max_length=20, default='N/A')
     admin_verified = models.BooleanField(default=False)
     college_rating = models.PositiveSmallIntegerField(default=0, help_text="Rating (1-5 stars)")
     

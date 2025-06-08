@@ -24,9 +24,9 @@ def college_register(request):
             college_mobile_no=data.get('college_mobile_no'),
             college_email=data.get('college_email'),
             college_description=data.get('college_description'),
+            college_registration_id = data.get('college_registration_id'),
+            college_registration_password = data.get('college_registration_password'),
         )
         submitted = True
     return render(request, 'college_register.html', {'submitted': submitted})
 
-def college_register_success(request):
-    return render(request, 'college_register_success.html')
