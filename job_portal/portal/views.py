@@ -32,6 +32,7 @@ def college_register(request):
     return render(request, 'college_register.html', {'submitted': submitted})
 
 def college_login(request):
+    popup_message = None
     if request.method == 'POST':
         reg_id = request.POST.get('college_registration_id')
         password = request.POST.get('college_registration_password')
@@ -42,10 +43,10 @@ def college_login(request):
                     # Login successful (you can set session here)
                     return render(request, 'index.html', {'college': college_obj})
                 else:
-                    return HttpResponse("wait for admin verification.")
+                    popup_message = "Wait for admin verification."
             else:
-                return HttpResponse("Invalid input credentials.")
+                popup_message = "Invalid input credentials."
         except college.DoesNotExist:
-            return HttpResponse("College does not exist")
-    return render(request, 'college_login.html')
+            popup_message = "College does not exist"
+    return render(request, 'college_login.html', {'popup_message': popup_message})
 
