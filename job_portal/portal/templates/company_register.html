@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Company Registration</title>
+</head>
+<body>
+    <h2>Company Registration</h2>
+    {% if submitted %}
+        <p style="color:green;">Registration successful! Please wait for admin verification.</p>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>Company Name:</label>
+        <input type="text" name="company_name" required><br>
+        <label>Location:</label>
+        <input type="text" name="company_location" required><br>
+        <label>Logo:</label>
+        <input type="file" name="company_logo"><br>
+        <label>Website:</label>
+        <input type="url" name="company_website"><br>
+        <label>Mobile No:</label>
+        <input type="text" name="company_mobile_no"><br>
+        <label>Email:</label>
+        <input type="email" name="company_email" required><br>
+        <label>Description:</label>
+        <textarea name="company_description"></textarea><br>
+        <label>Registration ID:</label>
+        <input type="text" name="company_registration_id" required><br>
+        <label>Password:</label>
+        <input type="password" name="company_registration_password" required><br>
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>

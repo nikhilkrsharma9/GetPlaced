@@ -41,3 +41,22 @@ class student (models.Model):
     class Meta:
         db_table = "student"
 
+class company (models.Model):
+    company_name = models.CharField(max_length = 100, default = 'N/A')
+    company_location = models.CharField(max_length = 100, default = 'N/A')
+    company_logo = models.ImageField(upload_to='company_logos/', default='company_logos/default.png')
+    company_website = models.URLField(max_length=200, default='https://www.example.com')
+    company_mobile_no = models.CharField(max_length=15, default='N/A')
+    company_email = models.EmailField(max_length=100, default='N/A')
+    company_description = models.TextField(default='N/A')
+    company_registration_id = models.CharField(max_length=20, default='N/A')
+    company_registration_password = models.CharField(max_length=128, default='N/A')  # Increase length for hashes
+    admin_verified = models.BooleanField(default=False)
+    company_rating = models.PositiveSmallIntegerField(default=0, help_text="Rating (1-5 stars)")
+    
+
+    def __str__(self):
+        return self.company_name
+    
+    class Meta:
+        db_table = "company"
