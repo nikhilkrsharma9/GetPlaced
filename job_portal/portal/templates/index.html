@@ -35,23 +35,21 @@
         <a href="#">Jobs</a>
         <a href="#">Companies</a>
         <a href="#">Login</a>
-        <a href="college_register">College Register</a>
+        <a href="#">Register</a>
     </nav>
-    <div style="text-align:center;">
-        {% comment %} linking college register button to the college_register.html {% endcomment %}
-        <a href="{% url 'college_register' %}" style="display:inline-block;margin-top:20px;padding:10px 24px;background:#2d3e50;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Register Your College</a>
-    </div>
-    <div style="text-align:center;">
-        {% comment %} linking college login button to the college_login.html {% endcomment %}
-        <a href="{% url 'college_login' %}" style="display:inline-block;margin-top:20px;padding:10px 24px;background:#2d3e50;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Login Your College</a>
-    </div>
-    <div style="text-align:center;">
-        {% comment %} linking company register button to the company_register.html {% endcomment %}
-        <a href="{% url 'company_register' %}" style="display:inline-block;margin-top:20px;padding:10px 24px;background:#2d3e50;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Register Your Company</a>
-    </div>
-    <div style="text-align:center;">
-        {% comment %} linking company login button to the company_login.html {% endcomment %}
-        <a href="{% url 'company_login' %}" style="display:inline-block;margin-top:20px;padding:10px 24px;background:#2d3e50;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Login Your Company</a>
+    <div style="display: flex; justify-content: space-between; max-width: 700px; margin: 30px auto 0 auto;">
+        <div style="flex: 1; text-align: center;">
+            <!-- College buttons -->
+            <a href="{% url 'college_register' %}" style="display:inline-block;margin:10px 0;padding:10px 24px;background:#1976d2;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Register Your College</a>
+            <br>
+            <a href="{% url 'college_login' %}" style="display:inline-block;margin:10px 0;padding:10px 24px;background:#388e3c;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Login Your College</a>
+        </div>
+        <div style="flex: 1; text-align: center;">
+            <!-- Company buttons -->
+            <a href="{% url 'company_register' %}" style="display:inline-block;margin:10px 0;padding:10px 24px;background:#d32f2f;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Register Your Company</a>
+            <br>
+            <a href="{% url 'company_login' %}" style="display:inline-block;margin:10px 0;padding:10px 24px;background:#fbc02d;color:#222;border-radius:4px;text-decoration:none;font-weight:bold;">Login Your Company</a>
+        </div>
     </div>
     <div class="container">
         <div class="hero">
