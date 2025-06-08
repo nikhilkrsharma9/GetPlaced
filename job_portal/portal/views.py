@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import college
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 
 # it is the index or home page
 def index (request):
@@ -30,4 +30,20 @@ def college_register(request):
         )
         submitted = True
     return render(request, 'college_register.html', {'submitted': submitted})
+
+def college_login(request):
+    error = None
+    if request.method == 'POST':
+        reg_id = request.POST.get('college_registration_id')
+        password = request.POST.get('college_registration_password')
+        try:
+            college_obj = college.objects.get(college_registration_id=reg_id)
+            if check_password(password, college_obj.college_registration_password):
+                # Login successful (you can set session here)
+                return render(request, 'index.html', {'college': college_obj})
+            else:
+                error = "Invalid Registration ID or Password."
+        except college.DoesNotExist:
+            error = "Invalid Registration ID or Password."
+    return render(request, 'college_login.html', {'error': error})
 
