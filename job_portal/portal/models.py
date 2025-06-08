@@ -18,11 +18,6 @@ class college (models.Model):
     admin_verified = models.BooleanField(default=False)
     college_rating = models.PositiveSmallIntegerField(default=0, help_text="Rating (1-5 stars)")
     
-    def save(self, *args, **kwargs):
-        # Hash the password if it's not already hashed
-        #if self.college_registration_password and not self.college_registration_password.startswith('pbkdf2_'):
-        self.college_registration_password = make_password(self.college_registration_password)
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.college_name

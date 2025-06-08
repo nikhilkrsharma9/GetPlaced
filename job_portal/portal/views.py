@@ -37,12 +37,12 @@ def college_login(request):
         password = request.POST.get('college_registration_password')
         try:
             college_obj = college.objects.get(college_registration_id=reg_id)
-            if check_password(password, college_obj.college_registration_password):
+            if password == college_obj.college_registration_password:
                 if college_obj.admin_verified:
                     # Login successful (you can set session here)
                     return render(request, 'index.html', {'college': college_obj})
                 else:
-                    return HttpResponse("Invalid input credentials.")
+                    return HttpResponse("wait for admin verification.")
             else:
                 return HttpResponse("Invalid input credentials.")
         except college.DoesNotExist:
