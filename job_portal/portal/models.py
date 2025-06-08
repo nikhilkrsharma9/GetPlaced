@@ -20,8 +20,8 @@ class college (models.Model):
     
     def save(self, *args, **kwargs):
         # Hash the password if it's not already hashed
-        if self.college_registration_password and not self.college_registration_password.startswith('pbkdf2_'):
-            self.college_registration_password = make_password(self.college_registration_password)
+        #if self.college_registration_password and not self.college_registration_password.startswith('pbkdf2_'):
+        self.college_registration_password = make_password(self.college_registration_password)
         super().save(*args, **kwargs)
 
     def __str__(self):
