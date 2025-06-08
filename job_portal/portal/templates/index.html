@@ -37,10 +37,16 @@
         <a href="#">Login</a>
         <a href="#">Register</a>
     </nav>
+    <div style="text-align:center;">
+        {% comment %} linking college register button to the college_register.html {% endcomment %}
+        <a href="{% url 'college_register' %}" style="display:inline-block;margin-top:20px;padding:10px 24px;background:#2d3e50;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Register Your College</a>
+    </div>
     <div class="container">
         <div class="hero">
             <h1>Find Your Next Opportunity</h1>
             <p>Search thousands of jobs from top companies and kickstart your career today!</p>
+
+            
         </div>
         <form class="search-bar" action="{% url 'job_search' %}" method="get">       {% comment %}  Here "job_search is" the search box in index.html or index page {% endcomment %}
             <input type="text" name="q" placeholder="Search jobs, skills, companies...">

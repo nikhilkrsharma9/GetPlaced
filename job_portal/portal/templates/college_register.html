@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>College Registration</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; }
+        .container { max-width: 500px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);}
+        h2 { text-align: center; color: #2d3e50; }
+        form label { display: block; margin-top: 15px; font-weight: bold; }
+        form input, form textarea { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        form button { margin-top: 20px; width: 100%; padding: 10px; background: #2d3e50; color: #fff; border: none; border-radius: 4px; font-size: 1em; cursor: pointer; }
+        form button:hover { background: #1a2533; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>College Registration Form</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="id_college_name">College Name</label>
+            <input type="text" name="college_name" id="id_college_name" maxlength="100" required>
+
+            <label for="id_college_location">Location</label>
+            <input type="text" name="college_location" id="id_college_location" maxlength="100" required>
+
+            <label for="id_college_university">University</label>
+            <input type="text" name="college_university" id="id_college_university" maxlength="100" required>
+
+            <label for="id_college_logo">Logo</label>
+            <input type="file" name="college_logo" id="id_college_logo" accept="image/*">
+
+            <label for="id_college_website">Website</label>
+            <input type="url" name="college_website" id="id_college_website" maxlength="200" required>
+
+            <label for="id_college_mobile_no">Mobile No</label>
+            <input type="text" name="college_mobile_no" id="id_college_mobile_no" maxlength="15" required>
+
+            <label for="id_college_email">Email</label>
+            <input type="email" name="college_email" id="id_college_email" maxlength="100" required>
+
+            <label for="id_college_description">Description</label>
+            <textarea name="college_description" id="id_college_description" rows="4"></textarea>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+    {% if submitted %}
+    <div id="popup" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;">
+        <div style="background:#fff;padding:30px 40px;border-radius:8px;text-align:center;">
+            <h2>College registration form submitted!</h2>
+            <h3>Wait for admin approval</h3>
+            <button onclick="document.getElementById('popup').style.display='none';window.location.href=window.location.href;">OK</button>
+        </div>
+    </div>
+    <script>
+        // Optionally, reset the form after submission
+        document.querySelector('form').reset();
+    </script>
+    {% endif %}
+</body>
+</html>
