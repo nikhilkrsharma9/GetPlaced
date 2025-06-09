@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import college, company
 from django.contrib.auth.hashers import make_password, check_password
+from django.db.models import Q
 
 # it is the index or home page
 def index (request):
@@ -86,4 +87,14 @@ def company_login(request):
         except company.DoesNotExist:
             popup_message = "Company does not exist"
     return render(request, 'company_login.html', {'popup_message': popup_message})
+
+def college_list(request):
+    query = request.GET.get('q', '')
+    colleges = college.objects.filter(admin_verified=True)
+    if query:
+        colleges = colleges.filter(college_name__icontains=query)
+    colleges = colleges.order_by('-college_rating', 'college_name')
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return render(request, 'college_list_results.html', {'colleges': colleges})
+    return render(request, 'college_list.html', {'colleges': colleges})
 
