@@ -1,0 +1,19 @@
+{% for company in companies %}
+<div class="company-card" style="background: #fff; border: 1px solid #e0e0e0; border-left: 6px solid #388e3c; border-radius: 6px; box-shadow: 0 2px 8px #0001; padding: 20px 24px; margin-bottom: 18px;">
+    <h2 style="margin:0 0 6px 0; font-size: 1.3em; color: #388e3c;">{{ company.company_name }}</h2>
+    <p style="margin: 0 0 8px 0; color: #555;"><strong>Location:</strong> {{ company.company_location }}</p>
+    <div>
+        <strong>Rating:</strong>
+        {% for i in "12345"|make_list %}
+            {% if forloop.counter <= company.company_rating %}
+                <span style="color:gold; font-size:1.1em;">&#9733;</span>
+            {% else %}
+                <span style="color:#ccc; font-size:1.1em;">&#9733;</span>
+            {% endif %}
+        {% endfor %}
+        <span style="color:#888;">({{ company.company_rating }}/5)</span>
+    </div>
+</div>
+{% empty %}
+<div style="text-align:center; color:#888;">No verified companies found.</div>
+{% endfor %}

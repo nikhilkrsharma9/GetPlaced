@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verified Companies - GetPlaced</title>
+    <link rel="stylesheet" href="{% static 'portal/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Verified Companies</h1>
+        <a href="{% url 'index' %}">← Back to Home</a>
+    </header>
+    <div class="container">
+        <form method="get" style="margin: 20px auto 30px auto; max-width: 420px; display: flex; gap: 8px;">
+            <input id="company-search" type="text" name="q" placeholder="Search company name..." value="{{ request.GET.q }}" style="flex:1; padding:8px; border-radius:4px; border:1px solid #ccc;">
+            <button type="submit" style="padding:8px 18px; background:#1976d2; color:#fff; border:none; border-radius:4px; font-weight:bold;">Search</button>
+        </form>
+        <div id="company-list-results" class="company-list" style="display: flex; flex-direction: column; gap: 18px; align-items: stretch; max-width: 420px; margin: 0 auto;">
+            {% include 'company_list_results.html' with companies=companies %}
+        </div>
+    </div>
+    <script>
+    document.getElementById('company-search').addEventListener('input', function() {
+        const query = this.value;
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', window.location.pathname + '?q=' + encodeURIComponent(query), true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                document.getElementById('company-list-results').innerHTML = xhr.responseText;
+            }
+        };
+        xhr.send();
+    });
+    </script>
+</body>
+</html>

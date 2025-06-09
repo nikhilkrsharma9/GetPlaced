@@ -98,3 +98,13 @@ def college_list(request):
         return render(request, 'college_list_results.html', {'colleges': colleges})
     return render(request, 'college_list.html', {'colleges': colleges})
 
+def company_list(request):
+    query = request.GET.get('q', '')
+    companies = company.objects.filter(admin_verified=True)
+    if query:
+        companies = companies.filter(company_name__icontains=query)
+    companies = companies.order_by('-company_rating', 'company_name')
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return render(request, 'company_list_results.html', {'companies': companies})
+    return render(request, 'company_list.html', {'companies': companies})
+
