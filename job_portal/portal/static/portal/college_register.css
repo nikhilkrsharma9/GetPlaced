@@ -1,0 +1,184 @@
+body {
+    font-family: 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(120deg, #e8eaed 0%, #f5f6fa 100%);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-container {
+    background: #fff;
+    padding: 44px 38px 36px 38px;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.10);
+    min-width: 350px;
+    max-width: 98vw;
+    margin: 40px auto;
+}
+
+.register-container h2 {
+    text-align: center;
+    color: #0071e3;
+    font-size: 2em;
+    margin-bottom: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.register-container form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 32px; /* row-gap column-gap */
+    align-items: center;
+}
+
+.register-container label {
+    font-weight: 600;
+    color: #18181a;
+    margin-bottom: 4px;
+    margin-top: 0;
+    grid-column: 1 / 2;
+    justify-self: end;
+    text-align: right;
+}
+
+.register-container input[type="text"],
+.register-container input[type="password"],
+.register-container input[type="email"],
+.register-container input[type="url"],
+.register-container input[type="file"],
+.register-container textarea {
+    grid-column: 2 / 3;
+    margin-bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1em;
+    background: #f8fafd;
+    color: #18181a;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.register-container input[type="file"] {
+    padding: 8px 0;
+    background: none;
+}
+
+.register-container input:focus,
+.register-container textarea:focus {
+    border: 1.5px solid #0071e3;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0,113,227,0.08);
+}
+
+.register-container textarea {
+    resize: vertical;
+    min-height: 80px;
+    max-height: 200px;
+    min-width: 100%;
+    max-width: 100%;
+}
+
+.register-container button[type="submit"] {
+    grid-column: 1 / 3;
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px 0;
+    background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.25s, box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(67, 206, 162, 0.10);
+    letter-spacing: 1px;
+}
+
+.register-container button[type="submit"]:hover {
+    background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+    box-shadow: 0 4px 16px rgba(67, 206, 162, 0.13);
+    transform: translateY(-2px) scale(1.03);
+}
+
+/* Popup styling */
+#popup {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#popup > div {
+    background: #fff;
+    padding: 36px 48px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.13);
+}
+
+#popup h2 {
+    color: #0071e3;
+    margin-bottom: 10px;
+}
+
+#popup h3 {
+    color: #34c759;
+    margin-bottom: 20px;
+}
+
+#popup button {
+    padding: 10px 32px;
+    background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+    color: #fff;
+    font-size: 1em;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.25s, box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(67, 206, 162, 0.10);
+}
+
+#popup button:hover {
+    background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+    box-shadow: 0 4px 16px rgba(67, 206, 162, 0.13);
+    transform: translateY(-2px) scale(1.03);
+}
+
+@media (max-width: 600px) {
+    .register-container {
+        padding: 18px 4vw;
+        min-width: unset;
+    }
+    #popup > div {
+        padding: 24px 10vw;
+    }
+}
+
+/* Responsive: stack fields on mobile */
+@media (max-width: 700px) {
+    .register-container form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .register-container label,
+    .register-container input,
+    .register-container textarea,
+    .register-container button[type="submit"] {
+        grid-column: unset;
+        width: 100%;
+        text-align: left;
+        justify-self: unset;
+    }
+}

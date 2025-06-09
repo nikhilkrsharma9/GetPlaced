@@ -1,0 +1,122 @@
+body {
+    font-family: 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(120deg, #e8eaed 0%, #f5f6fa 100%);
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    background: #fff;
+    padding: 44px 38px 36px 38px;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.10);
+    min-width: 350px;
+    max-width: 98vw;
+    margin: 40px auto;
+}
+
+.login-container h2 {
+    text-align: center;
+    color: #0071e3;
+    font-size: 2em;
+    margin-bottom: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.login-container form {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 14px 32px; /* row-gap column-gap: matches company login/register */
+    align-items: center;
+    margin-top: 0;
+}
+
+.login-container label {
+    font-weight: 600;
+    color: #18181a;
+    margin: 0;
+    padding: 0;
+    grid-column: 1 / 2;
+    justify-self: end;
+    text-align: right;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    grid-column: 2 / 3;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1em;
+    background: #f8fafd;
+    color: #18181a;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.login-container input[type="text"]:focus,
+.login-container input[type="password"]:focus {
+    border: 1.5px solid #0071e3;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0,113,227,0.08);
+}
+
+.login-container button[type="submit"] {
+    grid-column: 1 / 3;
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px 0;
+    background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.25s, box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(67, 206, 162, 0.10);
+    letter-spacing: 1px;
+}
+
+.login-container button[type="submit"]:hover {
+    background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+    box-shadow: 0 4px 16px rgba(67, 206, 162, 0.13);
+    transform: translateY(-2px) scale(1.03);
+}
+
+/* Success message styling (if needed) */
+.login-container p[style*="color:green"] {
+    grid-column: 1 / 3;
+    text-align: center;
+    margin-bottom: 18px;
+    font-weight: 600;
+    color: #34c759 !important;
+}
+
+/* Responsive: stack fields on mobile */
+@media (max-width: 700px) {
+    .login-container {
+        padding: 18px 4vw;
+        min-width: unset;
+    }
+    .login-container form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .login-container label,
+    .login-container input[type="text"],
+    .login-container input[type="password"],
+    .login-container button[type="submit"] {
+        grid-column: unset;
+        width: 100%;
+        text-align: left;
+        justify-self: unset;
+    }
+}

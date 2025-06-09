@@ -1,20 +1,22 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>College Login</title>
+    <link rel="stylesheet" href="{% static 'portal/college_login.css' %}">
 </head>
 <body>
-    <h2>College Login</h2>
-    
-    <form method="post">
-        {% csrf_token %}
-        <label for="college_registration_id">Registration ID:</label>
-        <input type="text" name="college_registration_id" id="college_registration_id" required><br><br>
-        <label for="college_registration_password">Password:</label>
-        <input type="password" name="college_registration_password" id="college_registration_password" required><br><br>
-        <button type="submit">Login</button>
-    </form>
-
+    <div class="login-container">
+        <h2>College Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="college_registration_id">Registration ID:</label>
+            <input type="text" name="college_registration_id" id="college_registration_id" required>
+            <label for="college_registration_password">Password:</label>
+            <input type="password" name="college_registration_password" id="college_registration_password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
     {% if popup_message %}
     <script>
         alert("{{ popup_message }}");
