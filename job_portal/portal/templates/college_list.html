@@ -19,19 +19,22 @@
         </form>
         <div id="college-list-results" class="college-list" style="display: flex; flex-direction: column; gap: 18px; align-items: stretch; max-width: 420px; margin: 0 auto;">
             {% for college in colleges %}
-            <div class="college-card" style="background: #fff; border: 1px solid #e0e0e0; border-left: 6px solid #1976d2; border-radius: 6px; box-shadow: 0 2px 8px #0001; padding: 20px 24px; display: flex; flex-direction: column;">
-                <h2 style="margin:0 0 6px 0; font-size: 1.3em; color: #1976d2;">{{ college.college_name }}</h2>
-                <p style="margin: 0 0 8px 0; color: #555;"><strong>Location:</strong> {{ college.college_location }}</p>
-                <div>
-                    <strong>Rating:</strong>
-                    {% for i in "12345"|make_list %}
-                        {% if forloop.counter <= college.college_rating %}
-                            <span style="color:gold; font-size:1.1em;">&#9733;</span>
-                        {% else %}
-                            <span style="color:#ccc; font-size:1.1em;">&#9733;</span>
-                        {% endif %}
-                    {% endfor %}
-                    <span style="color:#888;">({{ college.college_rating }}/5)</span>
+            <div class="college-card" style="background: #fff; border: 1px solid #e0e0e0; border-left: 6px solid #1976d2; border-radius: 6px; box-shadow: 0 2px 8px #0001; padding: 20px 24px; display: flex; flex-direction: row; align-items: center; gap: 18px;">
+                <img src="{{ college.college_logo.url }}" alt="Logo" style="width:56px; height:56px; object-fit:cover; border-radius:6px; border:1px solid #ccc;">
+                <div style="flex:1;">
+                    <h2 style="margin:0 0 6px 0; font-size: 1.3em; color: #1976d2;">{{ college.college_name }}</h2>
+                    <p style="margin: 0 0 8px 0; color: #555;"><strong>Location:</strong> {{ college.college_location }}</p>
+                    <div>
+                        <strong>Rating:</strong>
+                        {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= college.college_rating %}
+                                <span style="color:gold; font-size:1.1em;">&#9733;</span>
+                            {% else %}
+                                <span style="color:#ccc; font-size:1.1em;">&#9733;</span>
+                            {% endif %}
+                        {% endfor %}
+                        <span style="color:#888;">({{ college.college_rating }}/5)</span>
+                    </div>
                 </div>
             </div>
             {% empty %}

@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Students - {{ college.college_name }}</title>
+    <link rel="stylesheet" href="{% static 'portal/style.css' %}">
+</head>
+<body>
+    <h2>Add New Student for {{ college.college_name }}</h2>
+    <form method="post" enctype="multipart/form-data" style="max-width:400px;">
+        {% csrf_token %}
+        <input type="text" name="student_name" placeholder="Student Name" required style="width:100%;margin-bottom:8px;"><br>
+        <input type="text" name="student_reg_no" placeholder="Registration No" required style="width:100%;margin-bottom:8px;"><br>
+        <input type="text" name="student_branch" placeholder="Branch" required style="width:100%;margin-bottom:8px;"><br>
+        <input type="text" name="student_year" placeholder="Year" required style="width:100%;margin-bottom:8px;"><br>
+        <input type="text" name="student_skills" placeholder="Skills" style="width:100%;margin-bottom:8px;"><br>
+        <input type="file" name="student_image" style="margin-bottom:8px;"><br>
+        <input type="text" name="student_mobile_no" placeholder="Mobile No" style="width:100%;margin-bottom:8px;"><br>
+        <input type="email" name="student_email" placeholder="Email" style="width:100%;margin-bottom:8px;"><br>
+        <button type="submit" style="padding:8px 18px; background:#1976d2; color:#fff; border:none; border-radius:4px; font-weight:bold;">Add Student</button>
+    </form>
+    <br>
+    <a href="{% url 'college_after_login' college.id %}">← Back to Dashboard</a>
+</body>
+</html>

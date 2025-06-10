@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .models import college, company
+from .models import college, company, student
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
 
@@ -41,8 +41,8 @@ def college_login(request):
             college_obj = college.objects.get(college_registration_id=reg_id)
             if password == college_obj.college_registration_password:
                 if college_obj.admin_verified:
-                    # Login successful (you can set session here)
-                    return render(request, 'index.html', {'college': college_obj})
+                    # Redirect to dashboard after login
+                    return redirect('college_after_login', college_id=college_obj.id)
                 else:
                     popup_message = "Wait for admin verification."
             else:
@@ -107,4 +107,27 @@ def company_list(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return render(request, 'company_list_results.html', {'companies': companies})
     return render(request, 'company_list.html', {'companies': companies})
+
+def college_after_login(request, college_id):
+    college_obj = college.objects.get(id=college_id)
+    students = college_obj.students.all()
+    return render(request, 'college_after_login.html', {'college': college_obj, 'students': students})
+
+def manage_students(request, college_id):
+    college_obj = college.objects.get(id=college_id)
+    if request.method == 'POST':
+        data = request.POST
+        student.objects.create(
+            student_name=data.get('student_name'),
+            student_reg_no=data.get('student_reg_no'),
+            student_branch=data.get('student_branch'),
+            student_year=data.get('student_year'),
+            student_skills=data.get('student_skills'),
+            student_image=request.FILES.get('student_image'),
+            student_mobile_no=data.get('student_mobile_no'),
+            student_email=data.get('student_email'),
+            college=college_obj
+        )
+        return redirect('college_after_login', college_id=college_id)
+    return render(request, 'manage_students.html', {'college': college_obj})
 

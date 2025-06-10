@@ -34,10 +34,11 @@ class student (models.Model):
     student_image = models.ImageField(upload_to='student_images/', default='student_images/default.png')
     student_mobile_no = models.CharField(max_length=15, default='N/A')
     student_email = models.EmailField(max_length=100, default='N/A')
-    
+    college = models.ForeignKey(college, on_delete=models.CASCADE, related_name='students', default=1)
+
     def __str__(self):
         return self.student_name
-    
+
     class Meta:
         db_table = "student"
 
