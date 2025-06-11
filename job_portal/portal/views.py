@@ -6,7 +6,12 @@ from django.db.models import Q
 
 # it is the index or home page
 def index (request):
-    return render(request, 'index.html')
+    sample_colleges = college.objects.filter(admin_verified=True)[:3]
+    sample_companies = company.objects.filter(admin_verified=True)[:3]
+    return render(request, 'index.html', {
+        'sample_colleges': sample_colleges,
+        'sample_companies': sample_companies,
+    })
 
 #it is the search box in index.html or home page
 def job_search(request):

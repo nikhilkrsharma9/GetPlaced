@@ -62,13 +62,36 @@
         </form>
         <div class="features">
             <div class="feature">
-                <h3>For Job Seekers</h3>
-                <p>Browse jobs, upload your resume, and apply to positions that match your skills.</p>
+                <h3>Colleges</h3>
+                <ul style="list-style:none; padding:0; margin:0 0 12px 0;">
+                    {% for c in sample_colleges %}
+                        <li class="sample-item">
+                            <a href="{% url 'college_list' %}?q={{ c.college_name|urlencode }}" style="text-decoration:none; color:inherit;">
+                                <span style="font-weight:600;">{{ c.college_name }}</span>
+                                <span style="color:#888; font-size:0.95em;">({{ c.college_city }})</span>
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li class="sample-item">No colleges yet.</li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'college_list' %}" class="accent-btn" style="margin-top:12px;">View Colleges</a>
             </div>
-            
             <div class="feature">
-                <h3>Career Resources</h3>
-                <p>Get tips on resume writing, interview preparation, and career growth from experts.</p>
+                <h3>Companies</h3>
+                <ul style="list-style:none; padding:0; margin:0 0 12px 0;">
+                    {% for c in sample_companies %}
+                        <li class="sample-item">
+                            <a href="{% url 'company_list' %}?q={{ c.company_name|urlencode }}" style="text-decoration:none; color:inherit;">
+                                <span style="font-weight:600;">{{ c.company_name }}</span>
+                                <span style="color:#888; font-size:0.95em;">({{ c.company_city }})</span>
+                            </a>
+                        </li>
+                    {% empty %}
+                        <li class="sample-item">No companies yet.</li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'company_list' %}" class="accent-btn" style="margin-top:12px;">View Companies</a>
             </div>
         </div>
     </div>
