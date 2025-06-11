@@ -29,6 +29,19 @@ body {
     letter-spacing: 0.01em;
 }
 
+.headLogo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.headLogo img {
+    height: 100px; /* adjust as needed */
+    width: auto;
+    object-fit: contain;
+}
+
 header {
     background: transparent;
     color: var(--primary);
@@ -42,6 +55,7 @@ header {
 }
 
 header h1 {
+    margin: 0;
     font-size: 2.8em;
     font-weight: 800;
     margin-bottom: 0.2em;
