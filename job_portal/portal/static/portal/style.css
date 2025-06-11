@@ -415,6 +415,25 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: 
+        background 0.25s cubic-bezier(.4,0,.2,1),
+        border 0.25s cubic-bezier(.4,0,.2,1),
+        box-shadow 0.25s cubic-bezier(.4,0,.2,1),
+        transform 0.18s cubic-bezier(.4,0,.2,1);
+}
+
+.sample-item:hover {
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-dark) 100%);
+    border: 1.5px solid var(--accent-dark);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(255,106,61,0.13);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.sample-item:hover a,
+.sample-item:hover span {
+    color: #fff !important;
+    text-decoration: none;
 }
 
 /* Responsive tweaks */
