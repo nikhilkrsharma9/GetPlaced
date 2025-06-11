@@ -4,17 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <title>GetPlaced - Job Portal</title>
-    <link rel="icon" href="{% static 'logo1.png' %}">
+    <link rel="icon" href="{% static 'media/logo1.png' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'portal/style.css' %}">
 </head>
 <body>
     <header>
         <div class="headLogo">
-            <img src="{% static 'logo1.png' %}">
+            <img src="{% static 'logo1.png' %}" alt="Logo" class="circle-logo">
         </div>
-        <h1>GetPlaced</h1>
-        <p>Your Gateway to Dream Jobs</p>
+        {% comment %} <h1>GetPlaced</h1> {% endcomment %}
+        {% comment %} <p>Your Gateway to Dream Jobs</p> {% endcomment %}
     </header>
     <nav>
         <a href="#">Home</a>
@@ -38,15 +38,15 @@
     <div style="display: flex; justify-content: space-between; max-width: 700px; margin: 30px auto 0 auto;">
         <div style="flex: 1; text-align: center;">
             <!-- College buttons -->
-            <a href="{% url 'college_register' %}" style="display:inline-block;margin:10px 0;padding:10px 24px;background:#1976d2;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Register Your College</a>
+            <a href="{% url 'college_register' %}" class="accent-btn">Register Your College</a>
             <br>
-            <a href="{% url 'college_login' %}" style="display:inline-block;margin:10px 0;padding:10px 24px;background:#388e3c;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Login Your College</a>
+            <a href="{% url 'college_login' %}" class="accent-btn">Login Your College</a>
         </div>
         <div style="flex: 1; text-align: center;">
             <!-- Company buttons -->
-            <a href="{% url 'company_register' %}" style="display:inline-block;margin:10px 0;padding:10px 24px;background:#d32f2f;color:#fff;border-radius:4px;text-decoration:none;font-weight:bold;">Register Your Company</a>
+            <a href="{% url 'company_register' %}" class="accent-btn">Register Your Company</a>
             <br>
-            <a href="{% url 'company_login' %}" style="display:inline-block;margin:10px 0;padding:10px 24px;background:#fbc02d;color:#222;border-radius:4px;text-decoration:none;font-weight:bold;">Login Your Company</a>
+            <a href="{% url 'company_login' %}" class="accent-btn">Login Your Company</a>
         </div>
     </div>
     <div class="container">
