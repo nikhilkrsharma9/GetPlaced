@@ -38,6 +38,51 @@ body {
     color: var(--primary);
 }
 
+
+
+
+.rocket-bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Behind all content */
+    top: 0;
+    left: 0;
+}
+
+.rocket {
+    position: absolute;
+    width: 150px;
+    opacity: 0.4;
+    animation: floatUp 15s linear infinite;
+}
+
+.rocket-1 {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.rocket-2 {
+    left: 50%;
+    animation-delay: 1s;
+}
+
+.rocket-3 {
+    left: 80%;
+    animation-delay: 3s;
+}
+
+@keyframes floatUp {
+    0% {
+        bottom: -100px;
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        bottom: 110%;
+        transform: translateY(-200px) rotate(0deg);
+    }
+}
 .headLogo {
     display: flex;
     justify-content: center;
@@ -683,7 +728,7 @@ section {
     border-radius: var(--radius-lg);
     box-shadow: 0 2px 12px rgba(33,137,255,0.04);
     max-width: 1100px;
-    width: 100%;
+    width: 850px;
     position: relative;
     left: 0;
     right: 0;
@@ -878,7 +923,7 @@ footer {
 
 /* Responsive, animated floating shapes: add more color variety */
 .bg-shape.blue {
-    background: #2189ff;
+    background: #67ff21;
     width: 220px; height: 220px;
     left: 5vw; top: 10vh;
     animation-delay: 0s;
@@ -905,7 +950,7 @@ footer {
     background: #ff4d4f;
     width: 80px; height: 80px;
     left: 60vw; top: 18vh;
-    animation-delay: 5s;
+    animation-delay: 1s;
 }
 
 /* Add a gentle fade-in for .feature-icon */
