@@ -27,12 +27,15 @@
 body {
     font-family: 'SamsungOne', 'Inter', 'Segoe UI', Arial, sans-serif;
     margin: 0;
-    background: var(--background-gradient);
-    color: var(--primary);
+    /* background: var(--background-gradient); */
+    /* color: var(--primary); */
     min-height: 100vh;
     letter-spacing: 0.01em;
     position: relative;
     overflow-x: hidden;
+    
+    background: linear-gradient(135deg, #add6ff, #d1ffdd); /* or any you prefer */
+    color: var(--primary);
 }
 
 .headLogo {
@@ -41,10 +44,10 @@ body {
     align-items: center;
     margin-bottom: 18px;
     background: rgba(255,255,255,0.92);
-    border-radius: 14px;
+    border-radius: 50%;
     border: 2px solid var(--accent);
     width: 140px;
-    height: 56px;
+    height: 67px;
     margin-left: auto;
     margin-right: auto;
     box-shadow: 0 4px 24px rgba(33, 137, 255, 0.10);
@@ -53,10 +56,10 @@ body {
 }
 
 .headLogo img {
-    height: 44px;
+    height: 64px;
     width: 120px;
     object-fit: contain;
-    border-radius: 10px;
+    border-radius: 50%;
     border: 2px solid var(--accent);
     background: #fff;
     box-shadow: 0 2px 8px rgba(33, 137, 255, 0.10);
@@ -69,14 +72,14 @@ body {
     width: 140px;
     height: 140px;
     box-shadow: 0 8px 40px rgba(33, 137, 255, 0.18);
-    border-radius: 24px;
+    border-radius: 50%;
     border-color: var(--accent-dark);
 }
 
 .headLogo:hover img {
     width: 120px;
     height: 120px;
-    border-radius: 18px;
+    border-radius: 60%px;
     box-shadow: 0 8px 32px rgba(33, 137, 255, 0.18);
     border: 3px solid var(--accent-dark);
 }
