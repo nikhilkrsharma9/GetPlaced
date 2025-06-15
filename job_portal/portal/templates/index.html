@@ -7,6 +7,7 @@
     <link rel="icon" href="{% static 'menuLogo.png' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'portal/style.css' %}">
+    <link rel="stylesheet" href="{% static 'portal/search_results.css' %}">
 </head>
 <body>
     <!--Animted floating rocket-->
@@ -102,10 +103,15 @@
             <h1>Find Your Next Opportunity</h1>
             <p>Search thousands of jobs from top companies and kickstart your career today!</p>
         </div>
-        <form class="search-bar" action="{% url 'job_search' %}" method="get">
-            <input type="text" name="q" placeholder="Search jobs, skills, companies...">
+        <form class="search-bar" action="{% url 'job_search' %}" method="get" id="searchForm">
+            <input type="text" name="q" id="searchInput" placeholder="Search colleges, companies, jobs by name..." autocomplete="off">
             <button type="submit">Search</button>
         </form>
+        <div id="searchResults" class="search-results" style="display:none;">
+            <div id="collegesResults" class="results-section"></div>
+            <div id="companiesResults" class="results-section"></div>
+            <div id="jobsResults" class="results-section"></div>
+        </div>
         <div class="features">
             <div class="feature">
                 <h3>Colleges</h3>
@@ -193,5 +199,76 @@
         <span style="font-size:1.6em;">🔎</span>
     </a>
     <script src="{% static 'portal/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            let searchTimeout;
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    fetch(`/search?q=${encodeURIComponent(query)}&ajax=true`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Update colleges
+                            const collegesHtml = data.colleges.map(college => `
+                                <a href="/college_list?q=${encodeURIComponent(college.college_name)}" class="search-item">
+                                    <img src="${college.college_logo}" alt="${college.college_name}" class="search-logo">
+                                    <div class="search-item-content">
+                                        <h4>${college.college_name}</h4>
+                                        <p>${college.college_location}</p>
+                                    </div>
+                                </a>
+                            `).join('');
+                            document.getElementById('collegesResults').innerHTML = 
+                                data.colleges.length ? `<h3>Colleges</h3>${collegesHtml}` : '';
+
+                            // Update companies
+                            const companiesHtml = data.companies.map(company => `
+                                <a href="/company_list?q=${encodeURIComponent(company.company_name)}" class="search-item">
+                                    <img src="${company.company_logo}" alt="${company.company_name}" class="search-logo">
+                                    <div class="search-item-content">
+                                        <h4>${company.company_name}</h4>
+                                        <p>${company.company_location}</p>
+                                    </div>
+                                </a>
+                            `).join('');
+                            document.getElementById('companiesResults').innerHTML = 
+                                data.companies.length ? `<h3>Companies</h3>${companiesHtml}` : '';
+
+                            // Update jobs
+                            const jobsHtml = data.jobs.map(job => `
+                                <a href="/job_search?q=${encodeURIComponent(job.job_title)}" class="search-item">
+                                    <img src="${job.company_logo}" alt="${job.company_name}" class="search-logo">
+                                    <div class="search-item-content">
+                                        <h4>${job.job_title}</h4>
+                                        <p>${job.company_name} • ${job.job_location}</p>
+                                    </div>
+                                </a>
+                            `).join('');
+                            document.getElementById('jobsResults').innerHTML = 
+                                data.jobs.length ? `<h3>Jobs</h3>${jobsHtml}` : '';
+
+                            searchResults.style.display = 'block';
+                        });
+                }, 300);
+            });
+
+            // Hide results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchResults.contains(e.target) && e.target !== searchInput) {
+                    searchResults.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

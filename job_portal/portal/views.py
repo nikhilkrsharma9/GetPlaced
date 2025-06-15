@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import college, company, student, job
 from django.contrib.auth.hashers import make_password, check_password
@@ -15,7 +15,69 @@ def index (request):
 
 #it is the search box in index.html or home page
 def job_search(request):
-    return render(request, 'search_results.html')
+    query = request.GET.get('q', '')
+    is_ajax = request.GET.get('ajax') == 'true'
+    
+    context = {
+        'query': query,
+        'colleges': [],
+        'companies': [],
+        'jobs': []
+    }
+    
+    if query:
+        # Search colleges
+        colleges = college.objects.filter(
+            Q(college_name__icontains=query) |
+            Q(college_location__icontains=query)
+        ).filter(admin_verified=True)
+        
+        # Search companies
+        companies = company.objects.filter(
+            Q(company_name__icontains=query) |
+            Q(company_location__icontains=query)
+        ).filter(admin_verified=True)
+        
+        # Search jobs
+        jobs = job.objects.filter(
+            Q(job_title__icontains=query) |
+            Q(job_description__icontains=query) |
+            Q(job_location__icontains=query) |
+            Q(job_skills_required__icontains=query) |
+            Q(company__company_name__icontains=query)
+        ).select_related('company').filter(company__admin_verified=True)
+        
+        if is_ajax:
+            # For AJAX requests, return JSON data
+            data = {
+                'colleges': [{
+                    'college_name': c.college_name,
+                    'college_location': c.college_location,
+                    'college_logo': c.college_logo.url if c.college_logo else '/static/default_college.png'
+                } for c in colleges],
+                'companies': [{
+                    'company_name': c.company_name,
+                    'company_location': c.company_location,
+                    'company_logo': c.company_logo.url if c.company_logo else '/static/default_company.png'
+                } for c in companies],
+                'jobs': [{
+                    'job_title': j.job_title,
+                    'company_name': j.company.company_name,
+                    'job_location': j.job_location,
+                    'company_logo': j.company.company_logo.url if j.company.company_logo else '/static/default_company.png'
+                } for j in jobs]
+            }
+            return JsonResponse(data)
+        else:
+            # For regular requests, add to context
+            context['colleges'] = colleges
+            context['companies'] = companies
+            context['jobs'] = jobs
+    
+    if is_ajax:
+        return JsonResponse({'colleges': [], 'companies': [], 'jobs': []})
+    else:
+        return render(request, 'search_results.html', context)
 
 def college_register(request):
     submitted = False
