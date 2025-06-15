@@ -1,0 +1,112 @@
+<!-- filepath: n:\Project N\GetPlaced\job_portal\portal\templates\company_after_login.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Company Dashboard - {{ company.company_name }}</title>
+    <link rel="stylesheet" href="{% static 'portal/college_after_login.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>{{ company.company_name }} Dashboard</h1>
+            <p>Welcome, {{ company.company_name }}!</p>
+            <a href="{% url 'index' %}">← Back to Home</a>
+            <a href="{% url 'add_job' company.id %}" style="margin-left:20px; padding:8px 16px; background:#1976d2; color:#fff; border-radius:4px; text-decoration:none; font-weight:bold;">Add New Job</a>
+        </header>
+        <section>
+            <h2>Posted Jobs</h2>
+            <div class="table-card">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f0f0f0;">
+                            <th style="padding:8px;border:1px solid #ccc;">Title</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Description</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Location</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Type</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Skills Required</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Salary</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Last Date</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Contact Email</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                        <tr>
+                            {% if action == "edit" and job_to_edit.id == job.id %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="job_title" value="{{ job_to_edit.job_title }}" style="width:120px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <textarea name="job_description" style="width:150px;height:60px;">{{ job_to_edit.job_description }}</textarea>
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="job_location" value="{{ job_to_edit.job_location }}" style="width:100px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="job_type" value="{{ job_to_edit.job_type }}" style="width:90px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="job_skills_required" value="{{ job_to_edit.job_skills_required }}" style="width:120px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="job_salary" value="{{ job_to_edit.job_salary }}" style="width:100px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="date" name="job_last_date" value="{{ job_to_edit.job_last_date|date:'Y-m-d' }}" style="width:120px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="email" name="job_contact_email" value="{{ job_to_edit.job_contact_email }}" style="width:150px;">
+                                    </td>
+                                    <td style="padding:8px 8px 8px 0;border:1px solid #ccc;white-space:nowrap;">
+                                        <button type="submit" style="padding:4px 12px;background:#1976d2;color:#fff;border-radius:3px;border:none;margin-right:8px;">Save</button>
+                                        <a href="{% url 'company_after_login' company.id %}" style="padding:4px 12px;background:#888;color:#fff;border-radius:3px;text-decoration:none;margin-left:0;">Cancel</a>
+                                    </td>
+                                </form>
+                            {% elif action == "delete" and job_to_delete.id == job.id %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <td colspan="8" style="padding:8px;border:1px solid #ccc;">
+                                        Are you sure you want to delete <strong>{{ job_to_delete.job_title }}</strong>?
+                                        <button type="submit" style="margin-left:16px;padding:4px 12px;background:#d32f2f;color:#fff;border-radius:3px;border:none;">Yes, Delete</button>
+                                        <a href="{% url 'company_after_login' company.id %}" style="margin-left:12px;padding:4px 12px;background:#888;color:#fff;border-radius:3px;text-decoration:none;">Cancel</a>
+                                    </td>
+                                </form>
+                            {% else %}
+                                <td style="padding:8px;border:1px solid #ccc;">{{ job.job_title }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ job.job_description|truncatechars:40 }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ job.job_location }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ job.job_type }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ job.job_skills_required }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ job.job_salary }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ job.job_last_date }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ job.job_contact_email }}</td>
+                                <td style="padding:8px 8px 8px 0;border:1px solid #ccc;white-space:nowrap;">
+                                    <a href="{% url 'company_after_login' company.id %}?action=edit&job_id={{ job.id }}" style="padding:4px 12px;background:#ffa000;color:#fff;border-radius:3px;text-decoration:none;margin-right:8px;">Edit</a>
+                                    <a href="{% url 'company_after_login' company.id %}?action=delete&job_id={{ job.id }}" style="padding:4px 12px;background:#d32f2f;color:#fff;border-radius:3px;text-decoration:none;">Delete</a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" style="text-align:center;color:#888;">No jobs posted yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="bg-shapes">
+        <div class="bg-shape blue"></div>
+        <div class="bg-shape cyan"></div>
+        <div class="bg-shape yellow"></div>
+        <div class="bg-shape purple"></div>
+        <div class="bg-shape pink"></div>
+    </div>
+</body>
+</html>

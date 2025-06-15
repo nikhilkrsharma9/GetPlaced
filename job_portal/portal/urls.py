@@ -13,5 +13,8 @@ urlpatterns = [
     path('college_list', views.college_list, name='college_list'),
     path('company_list', views.company_list, name='company_list'),
     path('college_after_login/<int:college_id>/', views.college_after_login, name='college_after_login'),
-    path('manage_students/<int:college_id>/', views.manage_students, name='manage_students'),
+    
+    path('add_student/<int:college_id>/', views.add_student, name='add_student'),
+    path('company_after_login/<int:company_id>/', views.company_after_login, name='company_after_login'),
+    path('add_job/<int:company_id>/', views.add_job, name='add_job'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

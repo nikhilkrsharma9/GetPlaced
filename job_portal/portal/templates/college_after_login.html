@@ -4,49 +4,109 @@
 <head>
     <meta charset="UTF-8">
     <title>College Dashboard - {{ college.college_name }}</title>
-    <link rel="stylesheet" href="{% static 'portal/style.css' %}">
+    
+    <link rel="stylesheet" href="{% static 'portal/college_after_login.css' %}">
 </head>
 <body>
-    <header>
-        <h1>{{ college.college_name }} Dashboard</h1>
-        <p>Welcome, {{ college.college_name }}!</p>
-        <a href="{% url 'index' %}">← Back to Home</a>
-        <a href="{% url 'manage_students' college.id %}" style="margin-left:20px; padding:8px 16px; background:#1976d2; color:#fff; border-radius:4px; text-decoration:none; font-weight:bold;">Manage Students</a>
-    </header>
-    <section>
-        <h2>Registered Students</h2>
-        <table style="width:100%;border-collapse:collapse;">
-            <thead>
-                <tr style="background:#f0f0f0;">
-                    <th style="padding:8px;border:1px solid #ccc;">Image</th>
-                    <th style="padding:8px;border:1px solid #ccc;">Name</th>
-                    <th style="padding:8px;border:1px solid #ccc;">Reg No</th>
-                    <th style="padding:8px;border:1px solid #ccc;">Branch</th>
-                    <th style="padding:8px;border:1px solid #ccc;">Year</th>
-                    <th style="padding:8px;border:1px solid #ccc;">Skills</th>
-                    <th style="padding:8px;border:1px solid #ccc;">Email</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in students %}
-                <tr>
-                    <td style="padding:8px;border:1px solid #ccc;">
-                        <img src="{{ student.student_image.url }}" alt="Student Image" style="width:48px;height:48px;object-fit:cover;border-radius:4px;">
-                    </td>
-                    <td style="padding:8px;border:1px solid #ccc;">{{ student.student_name }}</td>
-                    <td style="padding:8px;border:1px solid #ccc;">{{ student.student_reg_no }}</td>
-                    <td style="padding:8px;border:1px solid #ccc;">{{ student.student_branch }}</td>
-                    <td style="padding:8px;border:1px solid #ccc;">{{ student.student_year }}</td>
-                    <td style="padding:8px;border:1px solid #ccc;">{{ student.student_skills }}</td>
-                    <td style="padding:8px;border:1px solid #ccc;">{{ student.student_email }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" style="text-align:center;color:#888;">No students registered yet.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </section>
+    <div class="main-container">
+        <header>
+            <h1>{{ college.college_name }} Dashboard</h1>
+            <p>Welcome, {{ college.college_name }}!</p>
+            <a href="{% url 'index' %}">← Back to Home</a>
+            <a href="{% url 'add_student' college.id %}" style="margin-left:20px; padding:8px 16px; background:#1976d2; color:#fff; border-radius:4px; text-decoration:none; font-weight:bold;">Add New Student</a>
+        </header>
+        <section>
+            <h2>Registered Students</h2>
+            <div class="table-card">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f0f0f0;">
+                            <th style="padding:8px;border:1px solid #ccc;">Image</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Name</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Reg No</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Branch</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Year</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Skills</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Email</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            {% if action == "edit" and student_to_edit.id == student.id %}
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="file" name="student_image" style="width:120px;">
+                                        {% if student_to_edit.student_image %}
+                                            <img src="{{ student_to_edit.student_image.url }}" alt="Student Image" style="width:48px;height:48px;object-fit:cover;border-radius:4px;margin-top:6px;">
+                                        {% endif %}
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="student_name" value="{{ student_to_edit.student_name }}" style="width:120px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="student_reg_no" value="{{ student_to_edit.student_reg_no }}" style="width:100px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="student_branch" value="{{ student_to_edit.student_branch }}" style="width:90px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="student_year" value="{{ student_to_edit.student_year }}" style="width:60px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="text" name="student_skills" value="{{ student_to_edit.student_skills }}" style="width:120px;">
+                                    </td>
+                                    <td style="padding:8px;border:1px solid #ccc;">
+                                        <input type="email" name="student_email" value="{{ student_to_edit.student_email }}" style="width:150px;">
+                                    </td>
+                                    <td style="padding:8px 8px 8px 0;border:1px solid #ccc;white-space:nowrap;">
+                                        <button type="submit" style="padding:4px 12px;background:#1976d2;color:#fff;border-radius:3px;border:none;margin-right:8px;">Save</button>
+                                        <a href="{% url 'college_after_login' college.id %}" style="padding:4px 12px;background:#888;color:#fff;border-radius:3px;text-decoration:none;margin-left:0;">Cancel</a>
+                                    </td>
+                                </form>
+                            {% elif action == "delete" and student_to_delete.id == student.id %}
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <td colspan="8" style="padding:8px;border:1px solid #ccc;">
+                                        Are you sure you want to delete <strong>{{ student_to_delete.student_name }}</strong>?
+                                        <button type="submit" style="margin-left:16px;padding:4px 12px;background:#d32f2f;color:#fff;border-radius:3px;border:none;">Yes, Delete</button>
+                                        <a href="{% url 'college_after_login' college.id %}" style="margin-left:12px;padding:4px 12px;background:#888;color:#fff;border-radius:3px;text-decoration:none;">Cancel</a>
+                                    </td>
+                                </form>
+                            {% else %}
+                                <td style="padding:8px;border:1px solid #ccc;">
+                                    <img src="{{ student.student_image.url }}" alt="Student Image" style="width:48px;height:48px;object-fit:cover;border-radius:4px;">
+                                </td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ student.student_name }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ student.student_reg_no }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ student.student_branch }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ student.student_year }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ student.student_skills }}</td>
+                                <td style="padding:8px;border:1px solid #ccc;">{{ student.student_email }}</td>
+                                <td style="padding:8px 8px 8px 0;border:1px solid #ccc;white-space:nowrap;">
+                                    <a href="{% url 'college_after_login' college.id %}?action=edit&student_id={{ student.id }}" style="padding:4px 12px;background:#ffa000;color:#fff;border-radius:3px;text-decoration:none;margin-right:8px;">Edit</a>
+                                    <a href="{% url 'college_after_login' college.id %}?action=delete&student_id={{ student.id }}" style="padding:4px 12px;background:#d32f2f;color:#fff;border-radius:3px;text-decoration:none;">Delete</a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" style="text-align:center;color:#888;">No students registered yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <div class="bg-shapes">
+        <div class="bg-shape blue"></div>
+        <div class="bg-shape cyan"></div>
+        <div class="bg-shape yellow"></div>
+        <div class="bg-shape purple"></div>
+        <div class="bg-shape pink"></div>
+    </div>
 </body>
 </html>

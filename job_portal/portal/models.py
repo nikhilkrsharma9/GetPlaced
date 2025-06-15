@@ -61,3 +61,21 @@ class company (models.Model):
     
     class Meta:
         db_table = "company"
+
+class job(models.Model):
+    job_title = models.CharField(max_length=100, default='N/A')
+    job_description = models.TextField(default='N/A')
+    job_location = models.CharField(max_length=100, default='N/A')
+    job_type = models.CharField(max_length=50, default='Full Time')  # e.g., Full Time, Part Time, Internship
+    job_skills_required = models.CharField(max_length=100, default='N/A')
+    job_salary = models.CharField(max_length=50, default='N/A')
+    job_posted_on = models.DateField(auto_now_add=True)
+    job_last_date = models.DateField(null=True, blank=True)
+    job_contact_email = models.EmailField(max_length=100, default='N/A')
+    company = models.ForeignKey(company, on_delete=models.CASCADE, related_name='jobs', default=1)
+
+    def __str__(self):
+        return self.job_title
+
+    class Meta:
+        db_table = "job"
