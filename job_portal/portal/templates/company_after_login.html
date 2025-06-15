@@ -1,0 +1,71 @@
+<!-- filepath: n:\Project N\GetPlaced\job_portal\portal\templates\company_after_login.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Company Dashboard - {{ company.company_name }}</title>
+    <link rel="stylesheet" href="{% static 'portal/college_after_login.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>{{ company.company_name }} Dashboard</h1>
+            <p>Welcome, {{ company.company_name }}!</p>
+            <a href="{% url 'index' %}">← Back to Home</a>
+            <a href="{% url 'add_job' company.id %}" style="margin-left:20px; padding:8px 16px; background:#1976d2; color:#fff; border-radius:4px; text-decoration:none; font-weight:bold;">Add New Job</a>
+        </header>
+        <section>
+            <h2>Posted Jobs</h2>
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Location</th>
+                            <th>Type</th>
+                            <th>Skills Required</th>
+                            <th>Salary</th>
+                            <th>Posted On</th>
+                            <th>Last Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                        <tr>
+                            <td>{{ job.job_title }}</td>
+                            <td>{{ job.job_description|truncatechars:40 }}</td>
+                            <td>{{ job.job_location }}</td>
+                            <td>{{ job.job_type }}</td>
+                            <td>{{ job.job_skills_required }}</td>
+                            <td>{{ job.job_salary }}</td>
+                            <td>{{ job.job_posted_on }}</td>
+                            <td>{{ job.job_last_date }}</td>
+                            <td>
+                                <!-- Add edit/delete actions as needed -->
+                                <a href="{% url 'edit_job' job.id %}" style="padding:4px 12px;background:#ffa000;color:#fff;border-radius:3px;text-decoration:none;margin-right:8px;">Edit</a>
+                                <a href="{% url 'delete_job' job.id %}" style="padding:4px 12px;background:#d32f2f;color:#fff;border-radius:3px;text-decoration:none;">Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" style="text-align:center;color:#888;">No jobs posted yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <!-- Optional: Animated background shapes for consistency -->
+    <div class="bg-shapes">
+        <div class="bg-shape blue"></div>
+        <div class="bg-shape cyan"></div>
+        <div class="bg-shape yellow"></div>
+        <div class="bg-shape purple"></div>
+        <div class="bg-shape pink"></div>
+    </div>
+</body>
+</html>
