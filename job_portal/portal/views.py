@@ -84,7 +84,7 @@ def company_login(request):
             company_obj = company.objects.get(company_registration_id=reg_id)
             if password == company_obj.company_registration_password:
                 if company_obj.admin_verified:
-                    return render(request, 'company_after_login.html', {'company': company_obj})
+                    return redirect('company_after_login', company_id=company_obj.id)
                 else:
                     popup_message = "Wait for admin verification."
             else:

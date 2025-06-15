@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Job - {{ company.company_name }}</title>
+    <link rel="stylesheet" href="{% static 'portal/college_after_login.css' %}">
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>Add New Job</h1>
+            <p>{{ company.company_name }}</p>
+            <a href="{% url 'company_after_login' company.id %}">← Back to Dashboard</a>
+        </header>
+        <section>
+            <div class="form-card" style="background:white;padding:20px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;font-weight:bold;">Job Title:</label>
+                        <input type="text" name="job_title" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;font-weight:bold;">Description:</label>
+                        <textarea name="job_description" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;height:100px;"></textarea>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;font-weight:bold;">Location:</label>
+                        <input type="text" name="job_location" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;font-weight:bold;">Type:</label>
+                        <input type="text" name="job_type" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;font-weight:bold;">Skills Required:</label>
+                        <input type="text" name="job_skills_required" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;font-weight:bold;">Salary:</label>
+                        <input type="text" name="job_salary" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;font-weight:bold;">Last Date:</label>
+                        <input type="date" name="job_last_date" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="display:block;margin-bottom:5px;font-weight:bold;">Contact Email:</label>
+                        <input type="email" name="job_contact_email" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;">
+                    </div>
+                    <div style="text-align:right;">
+                        <button type="submit" style="padding:8px 16px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;">Add Job</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    <div class="bg-shapes">
+        <div class="bg-shape blue"></div>
+        <div class="bg-shape cyan"></div>
+        <div class="bg-shape yellow"></div>
+        <div class="bg-shape purple"></div>
+        <div class="bg-shape pink"></div>
+    </div>
+</body>
+</html> 
