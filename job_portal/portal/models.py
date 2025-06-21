@@ -79,3 +79,39 @@ class job(models.Model):
 
     class Meta:
         db_table = "job"
+
+class ticket(models.Model):
+    college = models.ForeignKey(college, on_delete=models.CASCADE, related_name='tickets')
+    company = models.ForeignKey(company, on_delete=models.CASCADE, related_name='tickets')
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'Pending'),
+            ('approved', 'Approved'),
+            ('rejected', 'Rejected'),
+            ('cancelled', 'Cancelled')
+        ],
+        default='pending'
+    )
+    message = models.TextField(default='No message provided', blank=True)
+    requested_by = models.CharField(max_length=100, default='N/A', help_text="Who initiated the request")
+    reviewed_by = models.CharField(max_length=100, default='N/A', blank=True, help_text="Who reviewed the request")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    response_date = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Ticket: {self.college.college_name} - {self.company.company_name} ({self.status})"
+
+    class Meta:
+        db_table = "ticket"
+
+class ChatMessage(models.Model):
+    ticket = models.ForeignKey(ticket, on_delete=models.CASCADE, related_name='messages')
+    sender = models.CharField(max_length=20)  # 'College' or 'Company'
+    text = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'chat_message'

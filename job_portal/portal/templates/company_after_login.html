@@ -100,7 +100,82 @@
                 </table>
             </div>
         </section>
+        <section>
+            <h2>Tickets Raised by Colleges</h2>
+            <div class="table-card">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f0f0f0;">
+                            <th>College</th>
+                            <th>Contact Email</th>
+                            <th>Contact Mobile</th>
+                            <th>Message</th>
+                            <th>Student Details</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in tickets %}
+                        <tr>
+                            <td>{{ t.college.college_name }}</td>
+                            <td>{{ t.college.college_email }}</td>
+                            <td>{{ t.college.college_mobile_no }}</td>
+                            <td>{{ t.message }}</td>
+                            <td>
+                                {% for s in t.college.students.all %}
+                                    <div style="margin-bottom:8px;padding:6px 8px;background:#f7faff;border-radius:4px;">
+                                        <b>{{ s.student_name }}</b> ({{ s.student_reg_no }})<br>
+                                        {{ s.student_branch }}, {{ s.student_year }}<br>
+                                        Email: {{ s.student_email }}<br>
+                                        Mobile: {{ s.student_mobile_no }}
+                                    </div>
+                                {% empty %}
+                                    No students found.
+                                {% endfor %}
+                            </td>
+                            <td>{{ t.status|title }}</td>
+                            <td>
+                                {% if t.status == 'pending' %}
+                                <form method="post" action="{% url 'update_ticket_status' t.id %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="connect">
+                                    <button type="submit" style="background:#43cea2;color:#fff;padding:6px 14px;border-radius:4px;border:none;">Connect</button>
+                                </form>
+                                {% elif t.status == 'connect' %}
+                                    <a href="#" onclick="openChatModal('{% url 'chat_box' t.id %}?company_id={{ company.id }}');return false;" style="background:#1976d2;color:#fff;padding:6px 14px;border-radius:4px;text-decoration:none;">Go to Chat</a>
+                                {% else %}
+                                    <span style="color:#888;">No action</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" style="text-align:center;color:#888;">No tickets raised yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
+    <!-- Chat Modal Popup -->
+    <div id="chatModal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:10px;max-width:650px;width:96vw;max-height:90vh;overflow:auto;box-shadow:0 2px 24px #0005;position:relative;">
+        <button onclick="closeChatModal()" style="position:absolute;top:10px;right:16px;font-size:1.5em;background:none;border:none;cursor:pointer;">&times;</button>
+        <iframe id="chatFrame" src="" style="width:100%;height:70vh;border:none;border-radius:10px;"></iframe>
+      </div>
+    </div>
+    <script>
+    function openChatModal(chatUrl) {
+      document.getElementById('chatFrame').src = chatUrl;
+      document.getElementById('chatModal').style.display = 'flex';
+    }
+    function closeChatModal() {
+      document.getElementById('chatModal').style.display = 'none';
+      document.getElementById('chatFrame').src = '';
+    }
+    </script>
     <div class="bg-shapes">
         <div class="bg-shape blue"></div>
         <div class="bg-shape cyan"></div>

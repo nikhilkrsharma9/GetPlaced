@@ -1,8 +1,10 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import college, company, student, job
+from .models import college, company, student, job, ticket, ChatMessage
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
+from datetime import date
+from django.views.decorators.csrf import csrf_exempt
 
 # it is the index or home page
 def index (request):
@@ -178,9 +180,20 @@ def company_list(request):
 def college_after_login(request, college_id):
     college_obj = get_object_or_404(college, id=college_id)
     students = student.objects.filter(college=college_obj)
+    jobs = job.objects.filter(company__admin_verified=True).filter(job_last_date__gte=date.today())
+    # Show tickets raised by this college
+    tickets = ticket.objects.filter(college=college_obj, is_active=True).select_related('company')
     action = request.GET.get('action')
     student_id = request.GET.get('student_id')
-    context = {'college': college_obj, 'students': students}
+    ticket_raised = request.GET.get('ticket_raised') == '1'
+    # Pass the ticket id for the just raised ticket (if any) for button highlight
+    just_raised_ticket_id = None
+    if ticket_raised:
+        # Find the most recent ticket for this college
+        last_ticket = tickets.order_by('-id').first()
+        if last_ticket:
+            just_raised_ticket_id = last_ticket.id
+    context = {'college': college_obj, 'students': students, 'jobs': jobs, 'ticket_raised': ticket_raised, 'tickets': tickets, 'just_raised_ticket_id': just_raised_ticket_id}
 
     if action == 'edit' and student_id:
         student_to_edit = get_object_or_404(student, id=student_id, college=college_obj)
@@ -227,9 +240,11 @@ def add_student(request, college_id):
 def company_after_login(request, company_id):
     company_obj = company.objects.get(id=company_id)
     jobs = job.objects.filter(company=company_obj)
+    # Show tickets raised for this company
+    tickets = ticket.objects.filter(company=company_obj, is_active=True).select_related('college')
     action = request.GET.get('action')
     job_id = request.GET.get('job_id')
-    context = {'company': company_obj, 'jobs': jobs}
+    context = {'company': company_obj, 'jobs': jobs, 'tickets': tickets}
 
     if action == 'edit' and job_id:
         job_to_edit = get_object_or_404(job, id=job_id, company=company_obj)
@@ -273,5 +288,89 @@ def add_job(request, company_id):
         return redirect('company_after_login', company_id=company_id)
     return render(request, 'add_job.html', {'company': company_obj})
 
-# Add edit_job and delete_job views as needed
+@csrf_exempt
+def raise_ticket(request):
+    if request.method == 'POST':
+        college_id = request.POST.get('college_id')
+        company_id = request.POST.get('company_id')
+        message = request.POST.get('message', 'No message provided')
+        from .models import college, company
+        college_obj = college.objects.get(id=college_id)
+        company_obj = company.objects.get(id=company_id)
+        # Only one active ticket per college-company pair (no job field in model)
+        existing = ticket.objects.filter(college=college_obj, company=company_obj, is_active=True)
+        if not existing.exists():
+            new_ticket = ticket.objects.create(
+                college=college_obj,
+                company=company_obj,
+                message=message,
+                requested_by=college_obj.college_name
+            )
+            ticket_raised = True
+        else:
+            new_ticket = existing.first()
+            ticket_raised = False
+        # AJAX support
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            response = {'success': ticket_raised}
+            if hasattr(new_ticket, 'status') and new_ticket.status == 'connect':
+                from django.urls import reverse
+                response['chat_url'] = reverse('chat_box', args=[new_ticket.id])
+            return JsonResponse(response)
+        # Pass flag to dashboard for green box
+        return redirect(f'/college_after_login/{college_id}/?ticket_raised={int(ticket_raised)}')
+    return HttpResponse('Invalid request', status=400)
+
+def update_ticket_status(request, ticket_id):
+    t = get_object_or_404(ticket, id=ticket_id)
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        if new_status in ['connect', 'pending', 'approved', 'rejected', 'cancelled']:
+            t.status = new_status
+            t.save()
+            # Redirect to chat if status is connect
+            if new_status == 'connect':
+                return redirect('chat_box', ticket_id=t.id)
+    # Redirect back if not connect
+    if request.user.is_authenticated and hasattr(request.user, 'company'):
+        return redirect('company_after_login', company_id=t.company.id)
+    elif request.user.is_authenticated and hasattr(request.user, 'college'):
+        return redirect('college_after_login', college_id=t.college.id)
+    return HttpResponse('Unauthorized', status=401)
+
+# Placeholder chat view
+@csrf_exempt
+def chat_box(request, ticket_id):
+    t = get_object_or_404(ticket, id=ticket_id)
+    # Determine sender type and name for the current session/user
+    college_id = request.GET.get('college_id')
+    company_id = request.GET.get('company_id')
+    if college_id and str(t.college.id) == str(college_id):
+        sender_type = 'College'
+    elif company_id and str(t.company.id) == str(company_id):
+        sender_type = 'Company'
+    elif hasattr(request.user, 'college'):
+        sender_type = 'College'
+    else:
+        sender_type = 'Company'
+    sender_name = t.college.college_name
+    company_name = t.company.company_name
+
+    if request.method == 'POST':
+        msg = request.POST.get('message')
+        post_sender = request.POST.get('sender')
+        # Only create message if sender matches current session/user
+        if msg and post_sender == sender_type:
+            ChatMessage.objects.create(ticket=t, sender=sender_type, text=msg)
+        return redirect(request.path + f'?{request.META["QUERY_STRING"]}')  # Prevent resubmission on refresh
+
+    messages = ChatMessage.objects.filter(ticket=t).order_by('timestamp')
+    return render(request, 'chat_box.html', {
+        'ticket': t,
+        'messages': messages,
+        'sender_type': sender_type,
+        'college_name': sender_name,  # always college name
+        'company_name': company_name, # always company name
+        'current_sender_type': sender_type, # for alignment logic
+    })
 

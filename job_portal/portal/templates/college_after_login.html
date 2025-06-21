@@ -6,9 +6,15 @@
     <title>College Dashboard - {{ college.college_name }}</title>
     
     <link rel="stylesheet" href="{% static 'portal/college_after_login.css' %}">
+    <script src="{% static 'portal/college_after_login.js' %}"></script>
 </head>
 <body>
     <div class="main-container">
+        {% if ticket_raised %}
+        <div style="background:#d4edda;color:#155724;padding:14px 18px;border-radius:6px;margin:18px 0 0 0;font-weight:600;border:1.5px solid #b7e4c7;">
+            Ticket raised successfully!
+        </div>
+        {% endif %}
         <header>
             <h1>{{ college.college_name }} Dashboard</h1>
             <p>Welcome, {{ college.college_name }}!</p>
@@ -100,7 +106,79 @@
                 </table>
             </div>
         </section>
+        <section>
+            <h2>Active Job Openings</h2>
+            <div class="table-card">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f0f0f0;">
+                            <th style="padding:8px;border:1px solid #ccc;">Title</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Company</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Location</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Type</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Last Date</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in jobs %}
+                        <tr>
+                            <td style="padding:8px;border:1px solid #ccc;">{{ job.job_title }}</td>
+                            <td style="padding:8px;border:1px solid #ccc;">{{ job.company.company_name }}</td>
+                            <td style="padding:8px;border:1px solid #ccc;">{{ job.job_location }}</td>
+                            <td style="padding:8px;border:1px solid #ccc;">{{ job.job_type }}</td>
+                            <td style="padding:8px;border:1px solid #ccc;">{{ job.job_last_date }}</td>
+                            <td style="padding:8px;border:1px solid #ccc;white-space:nowrap;">
+                                {% with found_ticket=None %}
+                                    {% for t in tickets %}
+                                        {% if t.company.id == job.company.id and t.is_active %}
+                                            {% with found_ticket=t %}{% endwith %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if found_ticket %}
+                                        <button type="button" style="padding:4px 12px;background:#43cea2;color:#155724;border-radius:3px;border:none;cursor:not-allowed;" disabled>Ticket Raised</button>
+                                        {% if found_ticket.status == 'connect' %}
+                                            <a href="#" onclick="openChatModal('{% url 'chat_box' found_ticket.id %}?college_id={{ college.id }}');return false;" class="go-to-chat-btn" style="background:#1976d2;color:#fff;padding:4px 12px;border-radius:3px;text-decoration:none;margin-left:6px;">Go to Chat</a>
+                                        {% endif %}
+                                    {% else %}
+                                        <form method="post" action="{% url 'raise_ticket' %}" style="display:inline;" onsubmit="event.preventDefault(); raiseTicketAJAX('{{ college.id }}', '{{ job.company.id }}', '{{ job.id }}', this.querySelector('button')); return false;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="college_id" value="{{ college.id }}">
+                                            <input type="hidden" name="company_id" value="{{ job.company.id }}">
+                                            <input type="hidden" name="job_id" value="{{ job.id }}">
+                                            <button type="submit" style="padding:4px 12px;background:#1976d2;color:#fff;border-radius:3px;border:none;">Raise Ticket</button>
+                                        </form>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align:center;color:#888;">No active jobs available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
+    <!-- Chat Modal Popup -->
+    <div id="chatModal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:10px;max-width:650px;width:96vw;max-height:90vh;overflow:auto;box-shadow:0 2px 24px #0005;position:relative;">
+        <button onclick="closeChatModal()" style="position:absolute;top:10px;right:16px;font-size:1.5em;background:none;border:none;cursor:pointer;">&times;</button>
+        <iframe id="chatFrame" src="" style="width:100%;height:70vh;border:none;border-radius:10px;"></iframe>
+      </div>
+    </div>
+    <script>
+    function openChatModal(chatUrl) {
+      document.getElementById('chatFrame').src = chatUrl;
+      document.getElementById('chatModal').style.display = 'flex';
+    }
+    function closeChatModal() {
+      document.getElementById('chatModal').style.display = 'none';
+      document.getElementById('chatFrame').src = '';
+    }
+    </script>
     <div class="bg-shapes">
         <div class="bg-shape blue"></div>
         <div class="bg-shape cyan"></div>

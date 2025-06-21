@@ -17,4 +17,7 @@ urlpatterns = [
     path('add_student/<int:college_id>/', views.add_student, name='add_student'),
     path('company_after_login/<int:company_id>/', views.company_after_login, name='company_after_login'),
     path('add_job/<int:company_id>/', views.add_job, name='add_job'),
+    path('raise_ticket/', views.raise_ticket, name='raise_ticket'),
+    path('update_ticket_status/<int:ticket_id>/', views.update_ticket_status, name='update_ticket_status'),
+    path('chat_box/<int:ticket_id>/', views.chat_box, name='chat_box'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
