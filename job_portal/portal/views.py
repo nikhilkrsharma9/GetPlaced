@@ -10,9 +10,21 @@ from django.views.decorators.csrf import csrf_exempt
 def index (request):
     sample_colleges = college.objects.filter(admin_verified=True)[:3]
     sample_companies = company.objects.filter(admin_verified=True)[:3]
+    college_count = college.objects.filter(admin_verified=True).count()
+    company_count = company.objects.filter(admin_verified=True).count()
+    job_count = job.objects.filter(company__admin_verified=True).count()
+    # Placed students: count distinct students who have at least one ticket with status 'approved'
+    placed_count = student.objects.filter(
+        college__admin_verified=True,
+        id__in=ticket.objects.filter(status='approved').values_list('college__students__id', flat=True)
+    ).distinct().count()
     return render(request, 'index.html', {
         'sample_colleges': sample_colleges,
         'sample_companies': sample_companies,
+        'college_count': college_count,
+        'company_count': company_count,
+        'job_count': job_count,
+        'placed_count': placed_count,
     })
 
 #it is the search box in index.html or home page
