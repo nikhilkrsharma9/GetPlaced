@@ -516,7 +516,7 @@ footer {
     transform: translateY(-2px) scale(1.04);
 }
 .sample-item a {
-    text-decoration: none;
+    text-decoration: none;  
     /* color: #0071e3; optional: keep or change the color */
 }
 
@@ -1227,16 +1227,7 @@ input:focus, textarea:focus, select:focus {
     display: inline-block;
     padding-left: 18px;
 }
-.section-title::before {
-    content: "";
-    position: absolute;
-    left: 0; top: 50%;
-    transform: translateY(-50%);
-    width: 8px; height: 32px;
-    border-radius: 4px;
-    background: var(--accent-glass);
-    box-shadow: 0 2px 8px rgba(33,137,255,0.10);
-}
+
 
 /* Subtle fade-in animation for cards and features */
 .card, .feature, .sample-item {
