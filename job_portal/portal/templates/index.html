@@ -18,7 +18,7 @@
     <img src="{% static 'rockett.png' %}" class="rocket rocket-1">
     <img src="{% static 'rockett.png' %}" class="rocket rocket-2">
     <img src="{% static 'rockett.png' %}" class="rocket rocket-3">
-</div>
+    </div>
 
     <!-- Animated floating shapes background -->
     <div class="bg-shapes">
@@ -60,53 +60,26 @@
         <div class="stats-container">
             <div class="stat-block">
                 <div class="feature-icon">🎓</div>
-                <div class="stat-number" id="collegeCount">0</div>
+                <div class="stat-number">{{ college_count|default:"5" }}</div>
                 <div class="stat-label">Colleges</div>
             </div>
             <div class="stat-block">
                 <div class="feature-icon">🏢</div>
-                <div class="stat-number" id="companyCount">0</div>
+                <div class="stat-number">{{ company_count|default:"1" }}</div>
                 <div class="stat-label">Companies</div>
             </div>
             <div class="stat-block">
                 <div class="feature-icon">💼</div>
-                <div class="stat-number" id="jobCount">0</div>
+                <div class="stat-number">{{ job_count|default:"1" }}</div>
                 <div class="stat-label">Jobs Posted</div>
             </div>
             <div class="stat-block">
                 <div class="feature-icon">🚀</div>
-                <div class="stat-number" id="placedCount">0</div>
+                <div class="stat-number">{{ placed_count|default:"1" }}</div>
                 <div class="stat-label">Students Placed</div>
             </div>
         </div>
     </section>
-    <script>
-        // Live counting animation for stats
-        function animateCount(id, end, duration) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            const start = 0;
-            const range = end - start;
-            let startTime = null;
-            function step(timestamp) {
-                if (!startTime) startTime = timestamp;
-                const progress = Math.min((timestamp - startTime) / duration, 1);
-                el.textContent = Math.floor(progress * range + start);
-                if (progress < 1) {
-                    requestAnimationFrame(step);
-                } else {
-                    el.textContent = end;
-                }
-            }
-            requestAnimationFrame(step);
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            animateCount('collegeCount', parseInt('{{ college_count|default:"5" }}'), 1200);
-            animateCount('companyCount', parseInt('{{ company_count|default:"1" }}'), 1200);
-            animateCount('jobCount', parseInt('{{ job_count|default:"1" }}'), 1200);
-            animateCount('placedCount', parseInt('{{ placed_count|default:"1" }}'), 1200);
-        });
-    </script>
 
     <!-- Call to action for students -->
     <div class="cta-student">
@@ -150,7 +123,9 @@
                         <li class="sample-item">
                             <a href="{% url 'college_list' %}?q={{ c.college_name|urlencode }}">
                                 <span class="item-title">{{ c.college_name }}</span>
-                                <span class="item-meta">({{ c.college_city }})</span>
+                                  {% if c.company_city %}
+                                    <span class="item-meta">({{ c.company_city }})</span>
+                                 {% endif %}
                             </a>
                         </li>
                     {% empty %}
@@ -166,7 +141,10 @@
                         <li class="sample-item">
                             <a href="{% url 'company_list' %}?q={{ c.company_name|urlencode }}">
                                 <span class="item-title">{{ c.company_name }}</span>
-                                <span class="item-meta">({{ c.company_city }})</span>
+                                  {% if c.company_city %}
+                                    <span class="item-meta">({{ c.company_city }})</span>
+                                    {% endif %}
+                                
                             </a>
                         </li>
                     {% empty %}

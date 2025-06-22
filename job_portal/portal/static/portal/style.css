@@ -515,8 +515,13 @@ footer {
     box-shadow: 0 4px 16px rgba(33,137,255,0.13);
     transform: translateY(-2px) scale(1.04);
 }
+.sample-item a {
+    text-decoration: none;
+    /* color: #0071e3; optional: keep or change the color */
+}
 
 .sample-item {
+    
     background: rgba(255,255,255,0.85);
     border: 1px solid #e3e8ef;
     border-radius: 8px;
@@ -863,6 +868,7 @@ footer {
 .item-title {
     font-weight: 600;
 }
+
 .item-meta {
     color: #888;
     font-size: 0.95em;
