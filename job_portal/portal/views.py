@@ -1,8 +1,10 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import college, company, student, job
+from .models import college, company, student, job, ticket, ChatMessage
 from django.contrib.auth.hashers import make_password, check_password
 from django.db.models import Q
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 # it is the index or home page
 def index (request):
@@ -128,7 +130,7 @@ def company_register(request):
             company_location=data.get('company_location'),
             company_logo=files.get('company_logo'),
             company_website=data.get('company_website'),
-            company_mobile_no=data.get('company_mobile_no'),
+            company_mobile_no=data.get('company_mobile') or '',
             company_email=data.get('company_email'),
             company_description=data.get('company_description'),
             company_registration_id=data.get('company_registration_id'),
@@ -178,9 +180,18 @@ def company_list(request):
 def college_after_login(request, college_id):
     college_obj = get_object_or_404(college, id=college_id)
     students = student.objects.filter(college=college_obj)
+    from django.utils import timezone
+    today = timezone.now().date()
+    # Show ALL active jobs (future last_date or no last_date, and company is verified)
+    jobs = job.objects.filter(
+        company__admin_verified=True
+    ).filter(
+        Q(job_last_date__isnull=True) | Q(job_last_date__gte=today)
+    ).select_related('company').order_by('-job_posted_on')
+    tickets = ticket.objects.filter(college=college_obj)
     action = request.GET.get('action')
     student_id = request.GET.get('student_id')
-    context = {'college': college_obj, 'students': students}
+    context = {'college': college_obj, 'students': students, 'jobs': jobs, 'tickets': tickets}
 
     if action == 'edit' and student_id:
         student_to_edit = get_object_or_404(student, id=student_id, college=college_obj)
@@ -227,9 +238,11 @@ def add_student(request, college_id):
 def company_after_login(request, company_id):
     company_obj = company.objects.get(id=company_id)
     jobs = job.objects.filter(company=company_obj)
+    # Show tickets raised to this company (active or all, as needed)
+    tickets = ticket.objects.filter(company=company_obj)
     action = request.GET.get('action')
     job_id = request.GET.get('job_id')
-    context = {'company': company_obj, 'jobs': jobs}
+    context = {'company': company_obj, 'jobs': jobs, 'tickets': tickets}
 
     if action == 'edit' and job_id:
         job_to_edit = get_object_or_404(job, id=job_id, company=company_obj)
@@ -273,5 +286,102 @@ def add_job(request, company_id):
         return redirect('company_after_login', company_id=company_id)
     return render(request, 'add_job.html', {'company': company_obj})
 
-# Add edit_job and delete_job views as needed
+@require_POST
+@csrf_exempt
+def raise_ticket(request):
+    """
+    Robust ticket creation: returns existing ticket info if present, else creates a new one. Always returns chat_url if chat is available.
+    """
+    college_id = request.POST.get('college_id')
+    company_id = request.POST.get('company_id')
+    message = request.POST.get('message', '').strip() or 'Request to connect'
+    if not (college_id and company_id):
+        return JsonResponse({'success': False, 'error': 'Missing data'})
+    college_obj = get_object_or_404(college, id=college_id)
+    company_obj = get_object_or_404(company, id=company_id)
+    existing = ticket.objects.filter(college=college_obj, company=company_obj, is_active=True).first()
+    if existing:
+        chat_url = ''
+        if existing.status == 'connect':
+            chat_url = f"/chat_box/{existing.id}/?college_id={college_obj.id}"
+        return JsonResponse({
+            'success': False,
+            'error': 'Ticket already exists',
+            'ticket_id': existing.id,
+            'status': existing.status,
+            'chat_url': chat_url
+        })
+    t = ticket.objects.create(
+        college=college_obj,
+        company=company_obj,
+        message=message,
+        status='pending',
+        is_active=True,
+        requested_by='College'
+    )
+    return JsonResponse({'success': True, 'ticket_id': t.id, 'status': t.status, 'chat_url': ''})
+
+def chat_box(request, ticket_id):
+    print('DEBUG: chat_box view called for ticket_id', ticket_id)
+    t = get_object_or_404(ticket, id=ticket_id)
+    messages = ChatMessage.objects.filter(ticket=t).order_by('timestamp')
+    sender_type = 'College' if request.GET.get('college_id') else 'Company'
+    chat_allowed = t.status == 'connect'
+    error = None
+    if request.method == 'POST':
+        if not chat_allowed:
+            error = 'Chat is not available for this ticket.'
+        else:
+            text = request.POST.get('message', '').strip()
+            sender = request.POST.get('sender', sender_type)
+            if text:
+                ChatMessage.objects.create(ticket=t, sender=sender, text=text)
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('ajax') == '1':
+                    # After AJAX post, re-render chat only
+                    messages = ChatMessage.objects.filter(ticket=t).order_by('timestamp')
+                    return render(request, 'chat_box_inner.html', {
+                        'ticket': t,
+                        'messages': messages,
+                        'sender_type': sender_type,
+                        'chat_allowed': chat_allowed,
+                        'error': None
+                    })
+                return redirect(request.path + f'?{request.META.get("QUERY_STRING", "")}')
+            else:
+                error = 'Message cannot be empty.'
+    # AJAX GET: render only chat box inner HTML
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('ajax') == '1':
+        return render(request, 'chat_box_inner.html', {
+            'ticket': t,
+            'messages': messages,
+            'sender_type': sender_type,
+            'chat_allowed': chat_allowed,
+            'error': error
+        })
+    # Full page render
+    return render(request, 'chat_box.html', {
+        'ticket': t,
+        'messages': messages,
+        'sender_type': sender_type,
+        'chat_allowed': chat_allowed,
+        'error': error
+    })
+
+def connect_ticket(request, ticket_id, company_id):
+    """
+    Allows a company to approve a ticket (set status to 'connect'). Only accessible by the company that owns the ticket.
+    """
+    t = get_object_or_404(ticket, id=ticket_id)
+    if request.method == 'POST':
+        # Only the company can approve
+        if str(t.company.id) != str(company_id):
+            return HttpResponse('Unauthorized', status=403)
+        if t.status == 'pending':
+            t.status = 'connect'
+            t.save()
+        return redirect('company_after_login', company_id=company_id)
+    # For GET, just show a confirmation (optional, or redirect)
+    return redirect('company_after_login', company_id=t.company.id)
+
+
 

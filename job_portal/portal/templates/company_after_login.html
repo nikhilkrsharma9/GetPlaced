@@ -100,7 +100,109 @@
                 </table>
             </div>
         </section>
+        <section>
+            <h2>Tickets Raised by Colleges</h2>
+            <div class="table-card">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f0f0f0;">
+                            <th style="padding:8px;border:1px solid #ccc;">College</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Message</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Status</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Created At</th>
+                            <th style="padding:8px;border:1px solid #ccc;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in tickets %}
+                        <tr>
+                            <td style="padding:8px;border:1px solid #ccc;">{{ t.college.college_name }}</td>
+                            <td style="padding:8px;border:1px solid #ccc;">{{ t.message|truncatechars:40 }}</td>
+                            <td style="padding:8px;border:1px solid #ccc;">{{ t.status }}</td>
+                            <td style="padding:8px;border:1px solid #ccc;">{{ t.created_at|date:'Y-m-d H:i' }}</td>
+                            <td style="padding:8px;border:1px solid #ccc;white-space:nowrap;">
+                                {% if t.status == 'connect' %}
+                                    <a href="#" class="go-to-chat-btn" data-ticket-id="{{ t.id }}" style="background:#1976d2;color:#fff;padding:4px 12px;border-radius:3px;text-decoration:none;">Go to Chat</a>
+                                {% elif t.status == 'pending' %}
+                                    <form method="post" action="{% url 'connect_ticket' t.id company.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" style="background:#43cea2;color:#155724;padding:4px 12px;border-radius:3px;border:none;">Connect</button>
+                                    </form>
+                                {% else %}
+                                    <span style="color:#888;">No chat</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align:center;color:#888;">No tickets raised yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
+    <!-- Chat Modal Popup -->
+    <div id="chat-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;">
+      <div id="chat-modal-content" style="background:#fff;max-width:600px;width:95vw;min-height:300px;border-radius:8px;box-shadow:0 2px 16px #0003;padding:0;position:relative;">
+        <button onclick="closeChatModal()" style="position:absolute;top:8px;right:12px;background:#d32f2f;color:#fff;border:none;border-radius:3px;padding:4px 12px;font-weight:bold;cursor:pointer;">Close</button>
+        <div id="chat-modal-body" style="padding:24px 24px 12px 24px;"></div>
+      </div>
+    </div>
+    <script>
+    function openChatModal(ticketId) {
+      var modal = document.getElementById('chat-modal');
+      var body = document.getElementById('chat-modal-body');
+      modal.style.display = 'flex';
+      body.innerHTML = '<div style="text-align:center;padding:40px;">Loading chat...</div>';
+      fetch(`/chat_box/${ticketId}/?company_id={{ company.id }}&ajax=1`)
+        .then(r => r.text())
+        .then(html => { body.innerHTML = html; scrollChatToBottom(); attachChatFormHandler(ticketId); });
+    }
+    function closeChatModal() {
+      document.getElementById('chat-modal').style.display = 'none';
+    }
+    function scrollChatToBottom() {
+      var chatDiv = document.getElementById('chat-messages');
+      if (chatDiv) chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+    function attachChatFormHandler(ticketId) {
+      var form = document.getElementById('chat-form');
+      if (!form) return;
+      var textarea = form.querySelector('textarea[name="message"]');
+      if (textarea) {
+        textarea.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            form.requestSubmit ? form.requestSubmit() : form.submit();
+          }
+        });
+      }
+      form.onsubmit = function(e) {
+        e.preventDefault();
+        var data = new FormData(form);
+        fetch(`/chat_box/${ticketId}/?company_id={{ company.id }}&ajax=1`, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          body: data
+        })
+        .then(r => r.text())
+        .then(html => { document.getElementById('chat-modal-body').innerHTML = html; scrollChatToBottom(); attachChatFormHandler(ticketId); });
+        return false;
+      }
+    }
+    // Attach to all Go to Chat buttons
+    window.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.go-to-chat-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var ticketId = this.getAttribute('data-ticket-id');
+          openChatModal(ticketId);
+        });
+      });
+    });
+    </script>
     <div class="bg-shapes">
         <div class="bg-shape blue"></div>
         <div class="bg-shape cyan"></div>

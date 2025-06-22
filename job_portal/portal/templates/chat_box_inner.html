@@ -1,0 +1,26 @@
+<div class="chat-header">
+    Chat for Ticket #{{ ticket.id }} ({{ ticket.college.college_name }} ↔ {{ ticket.company.company_name }})
+</div>
+{% if error %}
+    <div class="chat-error">{{ error }}</div>
+{% endif %}
+{% if not chat_allowed %}
+    <div class="chat-locked">Chat is not available for this ticket. Please wait for the company to connect.</div>
+{% endif %}
+<div class="chat-messages" id="chat-messages" style="max-height:320px;overflow-y:auto;margin-bottom:16px;border:1px solid #eee;border-radius:4px;padding:12px;background:#f9f9f9;">
+    {% for msg in messages %}
+        <div class="chat-message">
+            <span class="sender" style="font-weight:bold;color:#1976d2;">{{ msg.sender }}</span>:
+            <span class="text">{{ msg.text }}</span>
+            <span class="timestamp" style="color:#888;font-size:0.9em;margin-left:8px;">{{ msg.timestamp|date:'Y-m-d H:i' }}</span>
+        </div>
+    {% empty %}
+        <div class="chat-message"><em>No messages yet.</em></div>
+    {% endfor %}
+</div>
+<form class="chat-form" id="chat-form" method="post" autocomplete="off" style="display:flex;gap:8px;">
+    {% csrf_token %}
+    <input type="hidden" name="sender" value="{{ sender_type }}">
+    <textarea name="message" rows="2" placeholder="Type your message..." {% if not chat_allowed %}disabled{% endif %} style="flex:1;resize:none;border-radius:4px;border:1px solid #ccc;padding:8px;"></textarea>
+    <button type="submit" {% if not chat_allowed %}disabled{% endif %} style="background:#1976d2;color:#fff;border:none;border-radius:4px;padding:8px 16px;font-weight:bold;cursor:pointer;">Send</button>
+</form>

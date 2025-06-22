@@ -79,3 +79,31 @@ class job(models.Model):
 
     class Meta:
         db_table = "job"
+
+class ticket(models.Model):
+    college = models.ForeignKey(college, on_delete=models.CASCADE, related_name='tickets')
+    company = models.ForeignKey(company, on_delete=models.CASCADE, related_name='tickets')
+    message = models.TextField(default='No message provided')
+    status = models.CharField(max_length=20, default='pending')  # pending, connect, approved, rejected, cancelled
+    is_active = models.BooleanField(default=True)
+    requested_by = models.CharField(max_length=100, default='N/A')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Ticket: {self.college.college_name} -> {self.company.company_name} ({self.status})"
+
+    class Meta:
+        db_table = 'ticket'
+        unique_together = ('college', 'company', 'is_active')
+
+class ChatMessage(models.Model):
+    ticket = models.ForeignKey(ticket, on_delete=models.CASCADE, related_name='messages')
+    sender = models.CharField(max_length=20)  # 'College' or 'Company'
+    text = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender}: {self.text[:30]}..."
+
+    class Meta:
+        db_table = 'chat_message'
