@@ -16,6 +16,13 @@ GetPlaced is a Django-based job portal designed to connect students, colleges, a
 - pip (Python package manager)
 - Virtual environment (recommended)
 
+## Install Modules
+- Django
+  cmd : "pip install django"
+
+- Pillow
+  cmd : "pip install Pillow"
+
 ## Installation
 1. **Clone the repository:**
    ```sh
